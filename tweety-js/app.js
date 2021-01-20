@@ -1,19 +1,78 @@
 const express = require( 'express' );
-const app = express(); 
+const morgan = require('morgan'); //middleware application logger
+const nunjucks = require( 'nunjucks' );
+
+const app = express(); // crea una instancia de una aplicación de express
+
+// Configurando Nunjucks
+app.set('view engine', 'html'); // hace que res.render funcione con archivos html
+app.engine('html', nunjucks.render); // cuando le den archivos html a res.render, va a usar nunjucks
+nunjucks.configure('views'); // apunta a nunjucks al directorio correcto para los templates
+
+app.use(express.static('./public'))
+
+app.use(morgan('tiny'))
+
+let tweetsDeEjemplo = [
+    { id: 1, name: "juan", content: "este es un tweeettt de juan" },
+    { id: 2, name: "carlos", content: "este es un tweeettt de carlos" },
+    { id: 3, name: "pepe", content: "este es un tweeettt de pepe" },
+];
+
+app.get('/', function (req, res) {
+    res.render( 'index', { tweets: tweetsDeEjemplo });
+});
+
+/* app.get('/stylesheets/style.css', function (req, res) {
+    res.sendFile(__dirname+"/public/stylesheets/style.css")
+}) */
+
+app.listen(3000, function(){
+    console.log('Estas escuhando en el puerto 3000')
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* const express = require( 'express' );
 const chalk = require('chalk');
-const morgan = require('morgan');
-///////// Logger Middleware //////////
+const morgan = require('morgan'); 
 var fs = require('fs')
-var path = require('path') //The path module provides utilities for working with file and directory paths.
+var path = require('path')
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
-// createWriteStream: create a write stream (in append mode) into 'access.log'
-// The path.join() method joins all given path segments together using the platform-specific separator as a delimiter, then normalizes the resulting path.
-// __dirname: The directory name of the current module
-// flags: 'a' - Open file for appending. The file is created if it does not exist.
+const nunjucks = require( 'nunjucks' );
+const app = express(); 
+///////
 
-
-
-// USO DE MIDDLEWARE
 
 app.use(morgan('combined', { stream: accessLogStream }))
 // Logger Middleware: this middleware will log all request in the Apache combined format to STDOUT
@@ -24,26 +83,30 @@ app.use(morgan('combined', { stream: accessLogStream }))
 
 app.use(function (req, res, next) {
     // hacé tu logueo acá, probá console.log(req)
-    console.log(chalk.red("pasé por el primer middlware"))
-    next()
-    // llamá a `next()`. Sino tu app recibirá pedidos 
+    // llamá a next(). Sino tu app recibirá pedidos 
     // pero no responderá adecuadamente.
+    console.log(chalk.red("pase por el primer middlewar"))
+    next()
 })
 
-app.use("/special/",function (req, res, next) {
-    // hacé tu logueo acá, probá console.log(req)
-    console.log(chalk.blue("pasé por el segundo middlware"+"entraste a special"))
+app.use('/special/', function (req, res, next) {
+
+    console.log(chalk.blue('Pasé por el primer Middleware y por special'))
     next()
-    // llamá a `next()`. Sino tu app recibirá pedidos 
-    // pero no responderá adecuadamente.
 })
 
-app.use(morgan('tiny')) //formá simplificada de morgan
+app.use(function(req, res, next){
+    const data = [{name: 'Full'}, {name: 'Stacker'}, {name: 'Son'}];
+    res.render( 'index', {title: 'Hall of Fame', personas: data} );
+});
 
+app.set('view engine', 'html'); // hace que res.render funcione con archivos html
+app.engine('html', nunjucks.render); // cuando le den archivos html a res.render, va a usar nunjucks
+nunjucks.configure('views'); // apunta a nunjucks al directorio correcto para los templates
 
+////////
 
-
-// COMIENZA EL LISTEN
+app.use(morgan('tiny'))
 app.listen(3000, function(){
     console.log('Servidor corriendo en el puerto 3000')
-});
+}); */
